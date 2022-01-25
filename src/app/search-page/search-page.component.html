@@ -1,27 +1,29 @@
 <section class="container d-flex flex-column flex-grow-1 pt-3 pt-sm-4 pt-md-5">
-    <h1 class="mb-0">GitHub Search</h1>
+    <div class="flex-grow-1">
+        <h1 class="mb-0">GitHub Search</h1>
 
-    <h3 class="pt-3 pt-sm-4 mb-0">
-        Please enter GitHub user name for search
-    </h3>
+        <h3 class="pt-3 pt-sm-4 mb-0">
+            Please enter GitHub user name for search
+        </h3>
 
-    <div class="row pt-3 pt-sm-4">
-        <div class="col-md-6">
-            <form [formGroup]="searchForm">
-                <mat-form-field class="w-100 notranslate">
-                    <input
-                        autocomplete="off"
-                        matInput
-                        placeholder="Username"
-                        spellcheck="false"
-                        formControlName="githubUserName"
-                    />
-                </mat-form-field>
-            </form>
+        <div class="row pt-3 pt-sm-4">
+            <div class="col-md-6">
+                <form [formGroup]="searchForm">
+                    <mat-form-field class="w-100 notranslate">
+                        <input
+                            autocomplete="off"
+                            matInput
+                            placeholder="Username"
+                            spellcheck="false"
+                            formControlName="githubUserName"
+                        />
+                    </mat-form-field>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div class="app-navigation-menu py-3 mt-auto">
+    <div class="app-navigation-menu py-3 mt-5">
         <button
             class="d-flex justify-content-center align-items-center"
             mat-flat-button
