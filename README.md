@@ -1,5 +1,5 @@
 # github-search
-**Search GitHub repositories by Username**
+**Search GitHub repositories by Repository name**
 
 This project is an example of interaction with GitHub API, using Angular, Apollo and GraphQL.<br>
 Note: For work you should have GitHub Personal Access Token.
