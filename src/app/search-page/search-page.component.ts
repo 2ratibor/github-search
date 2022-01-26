@@ -29,24 +29,30 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         this.getGitHubAccessToken();
 
         this.searchForm = new FormGroup({
-            githubUserName: new FormControl('')
+            githubRepositoryName: new FormControl('')
         });
 
-        this.searchForm.get('githubUserName').valueChanges
+        this.searchForm.get('githubRepositoryName').valueChanges
             .pipe(
                 debounceTime(500),
                 takeUntil(this.unsubscriber$)
             )
-            .subscribe((userName: string) => {
-                this.githubApiService.getRepositoriesDataByUsername(userName)
+            .subscribe((repoName: string) => {
+                this.githubApiService.getRepositoriesDataByRepoName(repoName)
                     .pipe(
                         take(1),
                         takeUntil(this.unsubscriber$)
                     )
                     .subscribe((repositories: MappedRepositoryData[]) => {
-                        this.repositoriesList = repositories;
+                        this.repositoriesList = this.getFilteredRepositoriesList(repositories, repoName);
                     });
             });
+    }
+
+    getFilteredRepositoriesList(repositories: MappedRepositoryData[], nameForFiltration: string) {
+        return repositories.filter((repo: MappedRepositoryData) => {
+            return repo.name.includes(nameForFiltration);
+        });
     }
 
     getGitHubAccessToken() {

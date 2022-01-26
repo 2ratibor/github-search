@@ -18,11 +18,13 @@ interface RepositoryData {
     stargazerCount: number;
 }
 
+interface ResponseSchemeEdge {
+    node: RepositoryData;
+}
+
 interface ResponseScheme {
-    user: {
-        repositories: {
-            nodes: RepositoryData[];
-        }
+    search: {
+        edges: ResponseSchemeEdge[];
     };
 }
 
@@ -49,21 +51,23 @@ export class GithubApiService {
 
     constructor(private apollo: Apollo) { }
 
-    getRepositoriesDataByUsername(userName: string): Observable<any> {
+    getRepositoriesDataByRepoName(repositoryName: string): Observable<MappedRepositoryData[]> {
         const GET_REPOSITORIES_DATA = gql`
             {
-                user(login: "${userName}") {
-                    repositories(first: 100) {
-                        nodes {
-                            name
-                            description
-                            url
-                            owner {
-                                avatarUrl
-                                login
+                search(query: "${repositoryName}", type: REPOSITORY, first: 100) {
+                    edges {
+                        node {
+                            ... on Repository {
+                                name
+                                description
+                                url
+                                owner {
+                                    avatarUrl
+                                    login
+                                }
+                                updatedAt
+                                stargazerCount
                             }
-                            updatedAt
-                            stargazerCount
                         }
                     }
                 }
@@ -79,19 +83,18 @@ export class GithubApiService {
                 map((resp: ApolloResponseData) => {
                     if (resp
                         && resp.data
-                        && resp.data.user
-                        && resp.data.user.repositories
-                        && Array.isArray(resp.data.user.repositories.nodes)
+                        && resp.data.search
+                        && Array.isArray(resp.data.search.edges)
                     ) {
-                        return resp.data.user.repositories.nodes.map((repository: RepositoryData) => {
+                        return resp.data.search.edges.map((responseSchemeEdge: ResponseSchemeEdge) => {
                             return {
-                                name: repository.name,
-                                description: repository.description,
-                                url: repository.url,
-                                updatedAt: DateParseLogic.parseToFullDate(repository.updatedAt),
-                                authorName: repository.owner.login,
-                                authorPhotoUrl: repository.owner.avatarUrl,
-                                countOfStars: repository.stargazerCount
+                                name: responseSchemeEdge.node.name,
+                                description: responseSchemeEdge.node.description,
+                                url: responseSchemeEdge.node.url,
+                                updatedAt: DateParseLogic.parseToFullDate(responseSchemeEdge.node.updatedAt),
+                                authorName: responseSchemeEdge.node.owner.login,
+                                authorPhotoUrl: responseSchemeEdge.node.owner.avatarUrl,
+                                countOfStars: responseSchemeEdge.node.stargazerCount
                             } as MappedRepositoryData;
                         });
                     } else {

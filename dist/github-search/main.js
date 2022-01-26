@@ -316,21 +316,23 @@ class GithubApiService {
     constructor(apollo) {
         this.apollo = apollo;
     }
-    getRepositoriesDataByUsername(userName) {
+    getRepositoriesDataByRepoName(repositoryName) {
         const GET_REPOSITORIES_DATA = apollo_angular__WEBPACK_IMPORTED_MODULE_0__["gql"] `
             {
-                user(login: "${userName}") {
-                    repositories(first: 100) {
-                        nodes {
-                            name
-                            description
-                            url
-                            owner {
-                                avatarUrl
-                                login
+                search(query: "${repositoryName}", type: REPOSITORY, first: 100) {
+                    edges {
+                        node {
+                            ... on Repository {
+                                name
+                                description
+                                url
+                                owner {
+                                    avatarUrl
+                                    login
+                                }
+                                updatedAt
+                                stargazerCount
                             }
-                            updatedAt
-                            stargazerCount
                         }
                     }
                 }
@@ -344,18 +346,17 @@ class GithubApiService {
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["map"])((resp) => {
             if (resp
                 && resp.data
-                && resp.data.user
-                && resp.data.user.repositories
-                && Array.isArray(resp.data.user.repositories.nodes)) {
-                return resp.data.user.repositories.nodes.map((repository) => {
+                && resp.data.search
+                && Array.isArray(resp.data.search.edges)) {
+                return resp.data.search.edges.map((responseSchemeEdge) => {
                     return {
-                        name: repository.name,
-                        description: repository.description,
-                        url: repository.url,
-                        updatedAt: _utils_date_parse_logic__WEBPACK_IMPORTED_MODULE_3__["DateParseLogic"].parseToFullDate(repository.updatedAt),
-                        authorName: repository.owner.login,
-                        authorPhotoUrl: repository.owner.avatarUrl,
-                        countOfStars: repository.stargazerCount
+                        name: responseSchemeEdge.node.name,
+                        description: responseSchemeEdge.node.description,
+                        url: responseSchemeEdge.node.url,
+                        updatedAt: _utils_date_parse_logic__WEBPACK_IMPORTED_MODULE_3__["DateParseLogic"].parseToFullDate(responseSchemeEdge.node.updatedAt),
+                        authorName: responseSchemeEdge.node.owner.login,
+                        authorPhotoUrl: responseSchemeEdge.node.owner.avatarUrl,
+                        countOfStars: responseSchemeEdge.node.stargazerCount
                     };
                 });
             }
@@ -673,16 +674,21 @@ class SearchPageComponent {
     ngOnInit() {
         this.getGitHubAccessToken();
         this.searchForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_0__["FormGroup"]({
-            githubUserName: new _angular_forms__WEBPACK_IMPORTED_MODULE_0__["FormControl"]('')
+            githubRepositoryName: new _angular_forms__WEBPACK_IMPORTED_MODULE_0__["FormControl"]('')
         });
-        this.searchForm.get('githubUserName').valueChanges
+        this.searchForm.get('githubRepositoryName').valueChanges
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["debounceTime"])(500), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(this.unsubscriber$))
-            .subscribe((userName) => {
-            this.githubApiService.getRepositoriesDataByUsername(userName)
+            .subscribe((repoName) => {
+            this.githubApiService.getRepositoriesDataByRepoName(repoName)
                 .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(this.unsubscriber$))
                 .subscribe((repositories) => {
-                this.repositoriesList = repositories;
+                this.repositoriesList = this.getFilteredRepositoriesList(repositories, repoName);
             });
+        });
+    }
+    getFilteredRepositoriesList(repositories, nameForFiltration) {
+        return repositories.filter((repo) => {
+            return repo.name.includes(nameForFiltration);
         });
     }
     getGitHubAccessToken() {
@@ -706,14 +712,14 @@ class SearchPageComponent {
 SearchPageComponent.ɵfac = function SearchPageComponent_Factory(t) { return new (t || SearchPageComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_api_github_api_service__WEBPACK_IMPORTED_MODULE_5__["GithubApiService"])); };
 SearchPageComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: SearchPageComponent, selectors: [["app-search-page"]], hostVars: 2, hostBindings: function SearchPageComponent_HostBindings(rf, ctx) { if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵclassMap"](ctx.hostClassName);
-    } }, decls: 18, vars: 2, consts: [[1, "container", "d-flex", "flex-column", "flex-grow-1", "pt-3", "pt-sm-4", "pt-md-5"], [1, "flex-grow-1"], [1, "mb-0"], [1, "pt-3", "pt-sm-4", "mb-0"], [1, "row", "pt-3", "pt-sm-4"], [1, "col-md-6"], [3, "formGroup"], [1, "w-100", "notranslate"], ["autocomplete", "off", "matInput", "", "placeholder", "Username", "spellcheck", "false", "formControlName", "githubUserName"], ["class", "pt-3 pt-sm-4", 4, "ngIf"], [1, "app-navigation-menu", "py-3", "mt-5"], ["mat-flat-button", "", "color", "primary", 1, "d-flex", "justify-content-center", "align-items-center", 3, "click"], [1, "mr-2"], [1, "pt-3", "pt-sm-4"], [4, "ngIf"], [3, "mt-4", 4, "ngFor", "ngForOf"], [1, "d-flex"], [1, "search-repository-author-photo", "d-flex", "justify-content-center", "align-items-center", "flex-shrink-0", "pt-1"], [1, "search-repository-author-photo-img", "responsive-img", 3, "src"], [1, "ml-2", "ml-sm-4"], [1, "search-repository-name"], [1, "mat-body-1", "pt-2"], [1, "text-break", 3, "href"], [1, "d-flex", "flex-wrap", "pt-1"], [1, "mat-small", "pt-1", "mr-3"], [1, "search-repository-field-title"], [1, "text-nowrap"], [1, "mat-small", "pt-1"], [1, "mat-body-1", "pt-3", "pt-sm-4"]], template: function SearchPageComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, decls: 18, vars: 2, consts: [[1, "container", "d-flex", "flex-column", "flex-grow-1", "pt-3", "pt-sm-4", "pt-md-5"], [1, "flex-grow-1"], [1, "mb-0"], [1, "pt-3", "pt-sm-4", "mb-0"], [1, "row", "pt-3", "pt-sm-4"], [1, "col-md-6"], [3, "formGroup"], [1, "w-100", "notranslate"], ["autocomplete", "off", "matInput", "", "placeholder", "Repository name", "spellcheck", "false", "formControlName", "githubRepositoryName"], ["class", "pt-3 pt-sm-4", 4, "ngIf"], [1, "app-navigation-menu", "py-3", "mt-5"], ["mat-flat-button", "", "color", "primary", 1, "d-flex", "justify-content-center", "align-items-center", 3, "click"], [1, "mr-2"], [1, "pt-3", "pt-sm-4"], [4, "ngIf"], [3, "mt-4", 4, "ngFor", "ngForOf"], [1, "d-flex"], [1, "search-repository-author-photo", "d-flex", "justify-content-center", "align-items-center", "flex-shrink-0", "pt-1"], [1, "search-repository-author-photo-img", "responsive-img", 3, "src"], [1, "ml-2", "ml-sm-4"], [1, "search-repository-name"], [1, "mat-body-1", "pt-2"], [1, "text-break", 3, "href"], [1, "d-flex", "flex-wrap", "pt-1"], [1, "mat-small", "pt-1", "mr-3"], [1, "search-repository-field-title"], [1, "text-nowrap"], [1, "mat-small", "pt-1"], [1, "mat-body-1", "pt-3", "pt-sm-4"]], template: function SearchPageComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "section", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](2, "h1", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](3, "GitHub Search");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](3, "GitHub Repository Search");
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "h3", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](5, " Please enter GitHub user name for search ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](5, " Please enter GitHub repository name for search ");
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](6, "div", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](7, "div", 5);
