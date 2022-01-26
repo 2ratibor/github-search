@@ -10,6 +10,7 @@ import { SearchPageComponent } from './search-page/search-page.component';
 import { MaterialModule } from './material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { SearchPageGuard } from './guards/search-page.guard';
+import { GraphQLModule } from './graphql.module';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { SearchPageGuard } from './guards/search-page.guard';
         HttpClientModule,
         ReactiveFormsModule,
         MaterialModule,
-        AppRoutingModule
+        AppRoutingModule,
+        GraphQLModule
     ],
     providers: [SearchPageGuard],
     bootstrap: [AppComponent]

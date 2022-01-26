@@ -1,8 +1,9 @@
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { GithubApiService } from '../api/github-api.service';
 
 
 @Component({
@@ -18,7 +19,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     private searchResultData: any;
     private unsubscriber$ = new Subject<void>();
 
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private githubApiService: GithubApiService
+    ) {}
 
     ngOnInit() {
         this.getGitHubAccessToken();
@@ -33,7 +37,19 @@ export class SearchPageComponent implements OnInit, OnDestroy {
                 takeUntil(this.unsubscriber$)
             )
             .subscribe((userName: string) => {
-
+                this.githubApiService.getRepositoriesDataByUsername(userName)
+                    .pipe(
+                        take(1),
+                        takeUntil(this.unsubscriber$)
+                    )
+                    .subscribe(
+                        (resp) => {
+                            console.log(11111, resp);
+                        },
+                        (err) => {
+                            console.log(2222, err);
+                        }
+                    );
             });
     }
 
