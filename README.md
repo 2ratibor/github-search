@@ -1,4 +1,10 @@
-# GitHub Search
+# github-search
+**Search GitHub repositories by Username**
+
+This project is an example of interaction with GitHub API, using Angular, Apollo and GraphQL.<br>
+Note: For work you should have GitHub Personal Access Token.
+
+<hr>
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.7.
 
