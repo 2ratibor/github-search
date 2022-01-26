@@ -3,7 +3,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { GithubApiService } from '../api/github-api.service';
+
+import { GithubApiService, MappedRepositoryData } from '../api/github-api.service';
 
 
 @Component({
@@ -16,7 +17,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     private gitHubAccessToken: string;
     public searchForm: FormGroup;
-    private searchResultData: any;
+    public repositoriesList: MappedRepositoryData[];
     private unsubscriber$ = new Subject<void>();
 
     constructor(
@@ -33,7 +34,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
         this.searchForm.get('githubUserName').valueChanges
             .pipe(
-                debounceTime(1000),
+                debounceTime(500),
                 takeUntil(this.unsubscriber$)
             )
             .subscribe((userName: string) => {
@@ -42,14 +43,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
                         take(1),
                         takeUntil(this.unsubscriber$)
                     )
-                    .subscribe(
-                        (resp) => {
-                            console.log(11111, resp);
-                        },
-                        (err) => {
-                            console.log(2222, err);
-                        }
-                    );
+                    .subscribe((repositories: MappedRepositoryData[]) => {
+                        this.repositoriesList = repositories;
+                    });
             });
     }
 

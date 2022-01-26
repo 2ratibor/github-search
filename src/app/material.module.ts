@@ -2,12 +2,14 @@ import { NgModule } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 
 const MATERIAL_MODULES = [
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
 ];
 
 @NgModule({

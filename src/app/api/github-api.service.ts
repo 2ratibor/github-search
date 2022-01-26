@@ -3,6 +3,8 @@ import { Apollo, gql } from 'apollo-angular';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { DateParseLogic } from '../utils/date-parse-logic';
+
 
 interface RepositoryData {
     name: string;
@@ -13,6 +15,7 @@ interface RepositoryData {
         login: string;
         avatarUrl: string;
     };
+    stargazerCount: number;
 }
 
 interface ResponseScheme {
@@ -27,6 +30,16 @@ interface ApolloResponseData {
     data: ResponseScheme;
     loading: boolean;
     networkStatus: number;
+}
+
+export interface MappedRepositoryData {
+    name: string;
+    description: string;
+    url: string;
+    updatedAt: string;
+    authorName: string;
+    authorPhotoUrl: string;
+    countOfStars: number;
 }
 
 @Injectable({
@@ -50,6 +63,7 @@ export class GithubApiService {
                                 login
                             }
                             updatedAt
+                            stargazerCount
                         }
                     }
                 }
@@ -63,7 +77,26 @@ export class GithubApiService {
             .valueChanges
             .pipe(
                 map((resp: ApolloResponseData) => {
-                    return resp;
+                    if (resp
+                        && resp.data
+                        && resp.data.user
+                        && resp.data.user.repositories
+                        && Array.isArray(resp.data.user.repositories.nodes)
+                    ) {
+                        return resp.data.user.repositories.nodes.map((repository: RepositoryData) => {
+                            return {
+                                name: repository.name,
+                                description: repository.description,
+                                url: repository.url,
+                                updatedAt: DateParseLogic.parseToFullDate(repository.updatedAt),
+                                authorName: repository.owner.login,
+                                authorPhotoUrl: repository.owner.avatarUrl,
+                                countOfStars: repository.stargazerCount
+                            } as MappedRepositoryData;
+                        });
+                    } else {
+                        return [];
+                    }
                 }),
                 catchError(() => {
                     return of([]);
