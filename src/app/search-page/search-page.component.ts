@@ -51,7 +51,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     getFilteredRepositoriesList(repositories: MappedRepositoryData[], nameForFiltration: string) {
         return repositories.filter((repo: MappedRepositoryData) => {
-            return repo.name.includes(nameForFiltration);
+            return repo.name.toLowerCase().includes(nameForFiltration.toLowerCase());
         });
     }
 

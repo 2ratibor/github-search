@@ -688,7 +688,7 @@ class SearchPageComponent {
     }
     getFilteredRepositoriesList(repositories, nameForFiltration) {
         return repositories.filter((repo) => {
-            return repo.name.includes(nameForFiltration);
+            return repo.name.toLowerCase().includes(nameForFiltration.toLowerCase());
         });
     }
     getGitHubAccessToken() {
