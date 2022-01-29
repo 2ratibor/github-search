@@ -1,8 +1,8 @@
-<section class="container d-flex flex-column flex-grow-1 pt-3 pt-sm-4 pt-md-5">
-    <div class="flex-grow-1">
+<section class="d-flex flex-column flex-grow-1 position-relative">
+    <div class="container flex-grow-1 pt-3 pt-sm-4 pt-md-5 pb-4 pb-sm-5">
         <h1 class="mb-0">GitHub Repository Search</h1>
 
-        <h3 class="pt-3 pt-sm-4 mb-0">
+        <h3 class="pt-2 pt-sm-4 mb-0">
             Please enter GitHub repository name for search
         </h3>
 
@@ -22,83 +22,102 @@
             </div>
         </div>
 
-        <div *ngIf="repositoriesList !== undefined" class="pt-3 pt-sm-4">
-            <mat-card *ngIf="repositoriesList.length === 0">
-                <h3>No results found</h3>
-            </mat-card>
+        <div class="position-relative">
+            <div
+                *ngIf="searchRequestInProgress"
+                class="search-preloader d-flex justify-content-center align-items-center"
+            >
+                <mat-spinner
+                    color="primary"
+                    [diameter]="40"
+                    [strokeWidth]="4"
+                ></mat-spinner>
+            </div>
 
-            <ng-container *ngIf="repositoriesList.length > 0">
-                <mat-card
-                    *ngFor="let repository of repositoriesList; first as isFirst"
-                    [class.mt-4]="!isFirst"
-                >
-                    <div class="d-flex">
-                        <div class="search-repository-author-photo d-flex justify-content-center align-items-center flex-shrink-0 pt-1">
-                            <img [src]="repository.authorPhotoUrl" class="search-repository-author-photo-img responsive-img">
-                        </div>
+            <div
+                *ngIf="repositoriesList !== undefined"
+                class="pt-3 pt-sm-4"
+                [class.search-preload-transparency]="searchRequestInProgress"
+            >
+                <mat-card *ngIf="repositoriesList.length === 0">
+                    <h3>No results found</h3>
+                </mat-card>
 
-                        <div class="ml-2 ml-sm-4">
-                            <div class="search-repository-name">
-                                {{ repository.name }}
+                <ng-container *ngIf="repositoriesList.length > 0">
+                    <mat-card
+                        *ngFor="let repository of repositoriesList; first as isFirst"
+                        [class.mt-4]="!isFirst"
+                    >
+                        <div class="d-flex">
+                            <div class="search-repository-author-photo d-flex justify-content-center align-items-center flex-shrink-0 pt-1">
+                                <img [src]="repository.authorPhotoUrl" class="search-repository-author-photo-img responsive-img">
                             </div>
 
-                            <div class="mat-body-1 pt-2">
-                                Repository url:
-                                <a [href]="repository.url" class="text-break">
-                                    {{ repository.url }}
-                                </a>
-                            </div>
-
-                            <div class="d-flex flex-wrap pt-1">
-                                <div class="mat-small pt-1 mr-3">
-                                    <span class="search-repository-field-title">
-                                        Count of stars:
-                                    </span>
-
-                                    {{ repository.countOfStars }}
+                            <div class="ml-2 ml-sm-4">
+                                <div class="search-repository-name">
+                                    {{ repository.name }}
                                 </div>
 
-                                <div class="mat-small pt-1 mr-3">
+                                <div class="mat-body-1 pt-2">
+                                    Repository url:
+                                    <a [href]="repository.url" class="text-break">
+                                        {{ repository.url }}
+                                    </a>
+                                </div>
+
+                                <div class="d-flex flex-wrap pt-1">
+                                    <div class="mat-small pt-1 mr-3">
+                                        <span class="search-repository-field-title">
+                                            Count of stars:
+                                        </span>
+
+                                        {{ repository.countOfStars }}
+                                    </div>
+
+                                    <div class="mat-small pt-1 mr-3">
                                     <span class="search-repository-field-title">
                                         Author:
                                     </span>
 
-                                    <span class="text-nowrap">
-                                        {{ repository.authorName }}
-                                    </span>
-                                </div>
+                                        <span class="text-nowrap">
+                                            {{ repository.authorName }}
+                                        </span>
+                                    </div>
 
-                                <div class="mat-small pt-1">
+                                    <div class="mat-small pt-1">
                                     <span class="search-repository-field-title">
                                         Last changed:
                                     </span>
 
-                                    <span class="text-nowrap">
-                                        {{ repository.updatedAt }}
-                                    </span>
+                                        <span class="text-nowrap">
+                                            {{ repository.updatedAt }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="mat-body-1 pt-3 pt-sm-4">
-                        {{ repository.description }}
-                    </div>
-                </mat-card>
-            </ng-container>
+                        <div class="mat-body-1 pt-3 pt-sm-4">
+                            {{ repository.description }}
+                        </div>
+                    </mat-card>
+                </ng-container>
+            </div>
         </div>
     </div>
 
-    <div class="app-navigation-menu py-3 mt-5">
-        <button
-            class="d-flex justify-content-center align-items-center"
-            mat-flat-button
-            color="primary"
-            (click)="onClickBackButton()"
-        >
-            <mat-icon class="mr-2">west</mat-icon>
-            <span>Back</span>
-        </button>
+    <div class="app-navigation-menu py-2 py-sm-3">
+        <div class="container">
+            <button
+                class="d-flex justify-content-center align-items-center"
+                mat-flat-button
+                color="primary"
+                (click)="onClickBackButton()"
+            >
+                <mat-icon class="mr-2">west</mat-icon>
+                <span>Back</span>
+            </button>
+        </div>
     </div>
 </section>
 

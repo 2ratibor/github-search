@@ -17,6 +17,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     private gitHubAccessToken: string;
     public searchForm: FormGroup;
+    public searchRequestInProgress = false;
     public repositoriesList: MappedRepositoryData[];
     private unsubscriber$ = new Subject<void>();
 
@@ -38,12 +39,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
                 takeUntil(this.unsubscriber$)
             )
             .subscribe((repoName: string) => {
+                this.searchRequestInProgress = true;
                 this.githubApiService.getRepositoriesDataByRepoName(repoName)
                     .pipe(
                         take(1),
                         takeUntil(this.unsubscriber$)
                     )
                     .subscribe((repositories: MappedRepositoryData[]) => {
+                        this.searchRequestInProgress = false;
                         this.repositoriesList = this.getFilteredRepositoriesList(repositories, repoName);
                     });
             });

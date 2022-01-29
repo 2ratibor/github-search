@@ -1,3 +1,19 @@
+.search {
+    &-preloader {
+        position: absolute;
+        top: 16px;
+        left: 0;
+        right: 0;
+        height: 166px;
+        z-index: 1;
+        @media screen and (min-width: 576px) {
+            top: 24px;
+        }
+    }
+    &-preload-transparency {
+        opacity: 0.3;
+    }
+}
 .search-repository {
     &-author-photo {
         width: 60px;

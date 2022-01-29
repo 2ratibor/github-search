@@ -1,8 +1,8 @@
-<section class="container d-flex flex-column flex-grow-1 pt-3 pt-sm-4 pt-md-5">
-    <div class="flex-grow-1">
+<section class="d-flex flex-column flex-grow-1 position-relative">
+    <div class="container flex-grow-1 pt-3 pt-sm-4 pt-md-5 pb-4 pb-sm-5">
         <h1 class="mb-0">Access Token</h1>
 
-        <h3 class="pt-3 pt-sm-4 mb-0">
+        <h3 class="pt-2 pt-sm-4 mb-0">
             Please enter your GitHub Personal Access Token in the field below and press Next button
         </h3>
 
@@ -28,15 +28,17 @@
         </div>
     </div>
 
-    <div class="app-navigation-menu d-flex justify-content-end py-3 mt-5">
-        <button
-            class="d-flex justify-content-center align-items-center"
-            mat-flat-button
-            color="primary"
-            (click)="onClickNextButton()"
-        >
-            <span>Next</span>
-            <mat-icon class="ml-2">east</mat-icon>
-        </button>
+    <div class="app-navigation-menu py-2 py-sm-3">
+        <div class="container d-flex justify-content-end">
+            <button
+                class="d-flex justify-content-center align-items-center"
+                mat-flat-button
+                color="primary"
+                (click)="onClickNextButton()"
+            >
+                <span>Next</span>
+                <mat-icon class="ml-2">east</mat-icon>
+            </button>
+        </div>
     </div>
 </section>
