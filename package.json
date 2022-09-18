@@ -5,7 +5,12 @@
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build --prod",
-        "build:for-github-pages": "ng build --prod --base-href /github-search/dist/github-search/",
+        "build:for-github-pages": "ng build --prod --base-href /github-search/dist/github-search/ && npm run create-404-file",
+        "create-404-file": "npm run copy-index-file && npm run rename-to-404 && npm run copy-404-file && npm run remove-excess-file",
+        "copy-index-file": "ncp dist/github-search/index.html dist/index.html",
+        "rename-to-404": "node -e \"require('fs').rename('dist/index.html', 'dist/404.html', function(err) { if (err) console.log(err); console.log('File renamed!') })\"",
+        "copy-404-file": "ncp dist/404.html dist/github-search/404.html",
+        "remove-excess-file": "npx rimraf dist/404.html",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"
@@ -27,6 +32,7 @@
         "bootstrap": "^4.3.1",
         "dayjs": "^1.10.7",
         "graphql": "^15.0.0",
+        "ncp": "^2.0.0",
         "rxjs": "~6.6.0",
         "tslib": "^2.0.0",
         "zone.js": "~0.11.3"
